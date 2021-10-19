@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+eureka:
+  client:
+    enabled: false
+    registerWithEureka: false
+    fetchRegistry: false
+
+zuul:
+  semaphore:
+    max-semaphores: 5000
+  thread-pool:
+    use-separate-thread-pools: true
+  host:
+    max-total-connections: 2000
+    max-per-route-connections: 200
+  debug:
+    request: true
+  ignoredServices: '*'
+  routes:
+    ms-on-service:
+      path: /ms-on/**
+      serviceId: ms-on-service
+    entrypoint-service:
+      path: /entrypoint/**
+      serviceId: entrypoint-service
+    ms-proxy-service:
+      path: /proxyservice/**
+      serviceId: ms-proxy-service
+
+ribbon:
+  eureka:
+    enabled: false
+  ReadTimeout: 600000
+  connection-timeout: 30000
+
+
+ms-on-service:
+  ribbon:
+    listOfServers: http://ms-on:8080
+
+entrypoint-service:
+  ribbon:
+    listOfServers: http://ventas-entrypoint:8080
+
+ms-proxy-service:
+  ribbon:
+    listOfServers: http://ms-proxy-esb:8080
